@@ -35,7 +35,6 @@
         
         /* 顧客資訊與辣椒粉 */
         .user-info-card { background: white; padding: 15px; border-radius: 15px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        
         /* 統一輸入框樣式 */
         .info-input { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd; font-size: 15px; margin-bottom: 12px; box-sizing: border-box; }
         
@@ -104,10 +103,9 @@
 
 <div class="container">
     <div class="user-info-card">
-        <input type="text" id="userName" class="info-input" placeholder="👤 您的名字 (老闆才知道是誰點的)">
+        <input type="text" id="userName" class="info-input" placeholder="👤 請問您的姓名是?">
         <input type="tel" id="userPhone" class="info-input" placeholder="📞 您的電話 (方便聯絡取餐)">
         
-        <!-- 新增：日期與時間 -->
         <div class="time-group">
             <div class="time-input-box">
                 <label class="input-label">📅 取餐日期</label>
@@ -120,7 +118,8 @@
         </div>
 
         <div class="chili-box">
-            <span class="chili-label">🌶️ 辣椒粉 (這筆訂單要加辣嗎？)</span>
+            <!-- 修改處：提示文字更新 -->
+            <span class="chili-label">🌶️ 想吃辣嗎?提供辣粉給您自行添加</span>
             <input type="checkbox" id="chiliCheck" class="chili-checkbox">
         </div>
     </div>
@@ -195,7 +194,7 @@
         {n:"檸檬多多", m:45, l:55, cat:"drink_juice", d:true}, {n:"金桔檸檬", m:40, l:50, cat:"drink_juice", d:true},
         {n:"蜂蜜檸檬", m:45, l:55, cat:"drink_juice", d:true}, {n:"西瓜牛奶", m:50, l:60, cat:"drink_juice", d:true},
         {n:"木瓜牛奶", m:60, l:60, cat:"drink_juice", d:true, ss:"單一尺寸(中杯)"},
-        // 飲料 - 特調
+        // 飲料 - 特調 (spec: true to show base choice)
         {n:"檸檬紅/綠茶", m:40, l:50, cat:"drink_special", d:true, spec:true},
         {n:"百香紅/綠茶", m:40, l:50, cat:"drink_special", d:true, spec:true},
         {n:"梅子紅/綠茶", m:40, l:50, cat:"drink_special", d:true, spec:true},
@@ -379,7 +378,7 @@
         if(!phone) return alert("請輸入您的電話！");
         if(cart.length === 0) return alert("購物車還沒挑選東西喔！");
 
-        const chili = document.getElementById('chiliCheck').checked ? "✅ 要加辣" : "❌ 不用辣";
+        const chili = document.getElementById('chiliCheck').checked ? "✅ 需要辣粉" : "❌ 不用辣粉";
         const total = cart.reduce((s, i) => s + i.p, 0);
         
         const summary = {};
