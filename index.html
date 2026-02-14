@@ -129,7 +129,6 @@
 
 <div class="cart-bar">
     <div class="cart-info" onclick="showCart()">🛒 已選 <span id="cart-count">0</span> 項 | $<span id="cart-total">0</span></div>
-    <!-- 修改處：按鈕文字更新 -->
     <button class="checkout-btn" onclick="submitToLine()">轉換成LINE訂單訊息 ➤</button>
 </div>
 
@@ -146,8 +145,9 @@
 </div>
 
 <script>
-    // ★★★ 請在這裡填入您的官方帳號 ID ★★★
-    const LINE_OA_ID = ''; 
+    // ★★★ 請務必在這裡填入您的官方帳號 ID (例如 @12345xyz) ★★★
+    // 填入後，按鈕會直接打開與官方帳號的對話視窗
+    const LINE_OA_ID = '@031kgahi'; 
 
     // --- 完整資料庫 ---
     const menuData = [
@@ -341,7 +341,7 @@
         if(cart.length === 0) return;
         const list = document.getElementById('modal-list');
         list.innerHTML = '';
-        document.getElementById('modal-chili').innerText = document.getElementById('chiliCheck').checked ? "🌶️ 辣椒粉：要！" : "🌶️ 辣椒粉：不用";
+        document.getElementById('modal-chili').innerText = document.getElementById('chiliCheck').checked ? "🌶️ 想吃辣嗎?提供辣粉給您自行添加" : "🌶️ 不需要辣粉";
         
         // 顯示預約時間
         const date = document.getElementById('pickupDate').value;
@@ -377,6 +377,31 @@
         if(!user) return alert("請輸入您的名字！");
         if(!phone) return alert("請輸入您的電話！");
         if(cart.length === 0) return alert("購物車還沒挑選東西喔！");
+
+        // --- 取餐時間驗證邏輯 ---
+        if (time) {
+            const [hour, minute] = time.split(':').map(Number);
+            let hasFried = false;
+            
+            // 檢查購物車內容判斷類別
+            for (let item of cart) {
+                const menuItem = menuData.find(m => m.n === item.n);
+                if (menuItem) {
+                    if (['meat', 'snack', 'vege'].includes(menuItem.cat)) {
+                        hasFried = true;
+                        break; 
+                    }
+                }
+            }
+
+            const minHour = hasFried ? 15 : 11;
+            const typeText = hasFried ? "包含炸物" : "僅有飲料";
+
+            if (hour < minHour) {
+                return alert(`⚠️ 您的訂單${typeText}，最早取餐時間為下午 ${minHour}:00 喔！`);
+            }
+        }
+        // -----------------------
 
         const chili = document.getElementById('chiliCheck').checked ? "✅ 需要辣粉" : "❌ 不用辣粉";
         const total = cart.reduce((s, i) => s + i.p, 0);
