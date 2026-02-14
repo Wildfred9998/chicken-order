@@ -43,6 +43,7 @@
         .time-input-box { flex: 1; display: flex; flex-direction: column; }
         .input-label { font-size: 12px; color: #666; margin-bottom: 4px; font-weight: bold; }
         .time-input { padding: 10px; border-radius: 8px; border: 1px solid #ddd; font-size: 15px; width: 100%; box-sizing: border-box; background: #fff; }
+        .time-note { font-size: 11px; color: #E63946; margin-top: 5px; line-height: 1.4; }
 
         .chili-box { display: flex; align-items: center; justify-content: space-between; background: #fff5f5; padding: 10px; border-radius: 8px; border: 1px dashed #E63946; }
         .chili-label { font-weight: bold; color: var(--primary); font-size: 14px; }
@@ -116,6 +117,9 @@
                 <input type="time" id="pickupTime" class="time-input">
             </div>
         </div>
+        <!-- 新增溫馨提醒 -->
+        <div class="time-note">如遇店內忙碌，仍有可能延誤預計取餐時間，敬請見諒👉👈</div>
+        <div style="height:10px"></div>
 
         <div class="chili-box">
             <span class="chili-label">🌶️ 想吃辣嗎?提供辣粉給您自行添加</span>
@@ -145,8 +149,7 @@
 </div>
 
 <script>
-    // ★★★ 請務必在這裡填入您的官方帳號 ID (例如 @12345xyz) ★★★
-    // 填入後，按鈕會直接打開與官方帳號的對話視窗
+    // ★★★ 已設定您的官方帳號 ID ★★★
     const LINE_OA_ID = '@31kgahi'; 
 
     // --- 完整資料庫 ---
@@ -378,12 +381,24 @@
         if(!phone) return alert("請輸入您的電話！");
         if(cart.length === 0) return alert("購物車還沒挑選東西喔！");
 
-        // --- 取餐時間驗證邏輯 ---
+        // --- 時間檢查邏輯 ---
         if (time) {
             const [hour, minute] = time.split(':').map(Number);
+            const pickupDateVal = document.getElementById('pickupDate').value;
+            const now = new Date();
+            const todayStr = now.toISOString().split('T')[0];
+
+            // 1. 檢查是否選到過去的時間 (如果是今天)
+            if (pickupDateVal === todayStr) {
+                const currentHour = now.getHours();
+                const currentMinute = now.getMinutes();
+                if (hour < currentHour || (hour === currentHour && minute < currentMinute)) {
+                     return alert("⚠️ 預計取餐時間已經過囉！請選擇未來的時間。");
+                }
+            }
+
+            // 2. 判斷最早取餐時間
             let hasFried = false;
-            
-            // 檢查購物車內容判斷類別
             for (let item of cart) {
                 const menuItem = menuData.find(m => m.n === item.n);
                 if (menuItem) {
@@ -394,11 +409,17 @@
                 }
             }
 
+            // 炸物最早 15:00，飲料最早 11:00
             const minHour = hasFried ? 15 : 11;
             const typeText = hasFried ? "包含炸物" : "僅有飲料";
 
             if (hour < minHour) {
-                return alert(`⚠️ 您的訂單${typeText}，最早取餐時間為上午 ${minHour}:00 喔！`);
+                return alert(`⚠️ 您的訂單${typeText}，最早取餐時間為 ${hasFried ? '下午 3:00' : '上午 11:00'} 喔！`);
+            }
+
+            // 3. 最晚訂餐時間 22:40
+            if (hour > 22 || (hour === 22 && minute > 40)) {
+                return alert("⚠️ 本店最晚訂餐時間為 22:40，請明天早點來喔！");
             }
         }
         // -----------------------
@@ -429,6 +450,7 @@
 
         const encodedMsg = encodeURIComponent(msg);
         
+        // 優先跳轉到官方帳號
         if (LINE_OA_ID && LINE_OA_ID.startsWith('@')) {
             window.location.href = `https://line.me/R/oaMessage/${LINE_OA_ID}/?${encodedMsg}`;
         } else {
@@ -439,4 +461,3 @@
 
 </body>
 </html>
-
