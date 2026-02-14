@@ -147,7 +147,7 @@
 <script>
     // ★★★ 請務必在這裡填入您的官方帳號 ID (例如 @12345xyz) ★★★
     // 填入後，按鈕會直接打開與官方帳號的對話視窗
-    const LINE_OA_ID = ''; 
+    const LINE_OA_ID = '@31kgahi'; 
 
     // --- 完整資料庫 ---
     const menuData = [
@@ -398,7 +398,7 @@
             const typeText = hasFried ? "包含炸物" : "僅有飲料";
 
             if (hour < minHour) {
-                return alert(`⚠️ 您的訂單${typeText}，最早取餐時間為下午 ${minHour}:00 喔！`);
+                return alert(`⚠️ 您的訂單${typeText}，最早取餐時間為上午 ${minHour}:00 喔！`);
             }
         }
         // -----------------------
@@ -439,3 +439,4 @@
 
 </body>
 </html>
+
